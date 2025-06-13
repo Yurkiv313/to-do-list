@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <h1 class="m-0">Home TODO list</h1>
+    <a class="btn btn-primary" href="{% url 'tasks:task-create' %}">+ ADD NEW TASK</a>
+  </div>
+
+  {% for task in task_list %}
+    <div class="border rounded p-3 mb-3 bg-light">
+
+      <div class="mb-2">
+        <strong style="font-size: 18px;">{{ task.content }}</strong>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span>
+          Status:
+          {% if task.is_done %}
+            <span class="text-success">Done</span>
+          {% else %}
+            <span class="text-danger">Not Done</span>
+          {% endif %}
+        </span>
+        {% if not task.is_done %}
+          <a class="btn btn-success btn-sm" href="{% url 'tasks:task-toggle' pk=task.id %}">Complete</a>
+        {% else %}
+          <a class="btn btn-secondary btn-sm" href="{% url 'tasks:task-toggle' pk=task.id %}">Undo</a>
+        {% endif %}
+      </div>
+
+      <div class="mb-2">
+        Created at: {{ task.created_at }}
+        {% if task.deadline %}
+          | Deadline: {{ task.deadline }}
+        {% endif %}
+      </div>
+
+      <div class="mb-2">
+        Tags:
+        {% for tag in task.tags.all %}
+          <span class="badge bg-secondary">{{ tag.name }}</span>
+        {% empty %}
+          <span>No tags</span>
+        {% endfor %}
+      </div>
+
+      <div>
+        <a class="btn btn-primary btn-sm" href="{% url 'tasks:task-update' pk=task.id %}">Update</a>
+        <a class="btn btn-danger btn-sm" href="{% url 'tasks:task-delete' pk=task.id %}">Delete</a>
+      </div>
+
+    </div>
+  {% empty %}
+      <h3>There are no tasks yet.</h3>
+  {% endfor %}
+
+{% endblock %}
